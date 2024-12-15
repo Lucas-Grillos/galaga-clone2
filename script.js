@@ -3,14 +3,35 @@ canvas.width = 600;
 canvas.height = 600;
 const ctx = canvas.getContext("2d");
 
-SHIP_VEL = 1;
-SHIP_DIAG_VEL = 0.75;
+SHIP_VEL = 2;
+SHIP_DIAG_VEL = 1.5;
 
 const MOVE_KEYS = {
     w: false,
     a: false,
     s: false, 
     d: false
+}
+
+class Ship_Bullet {
+    constructor() {
+        this.hitbox = {
+            height: 12,
+            width: 5
+        }
+
+        this.position = {
+            x: canvas.width / 2,
+            y: canvas.height / 2
+        }
+    }
+
+    draw() {
+        ctx.fillStyle = "yellow";
+        ctx.fillRect(this.position.x, this.position.y, this.hitbox.width, this.hitbox.height);
+    }
+    // CanvasRect.fillRect(x: number, y: number, w: number, h: number): void
+
 }
 
 class Player {
@@ -42,33 +63,76 @@ class Player {
     }
 
     setVelocity() {
-        if (MOVE_KEYS["w"]===true && MOVE_KEYS["s"]!== true) {
-            this.velocity.y = -SHIP_VEL;
+        /* w 'up' movement */
+        if (MOVE_KEYS["w"] && !MOVE_KEYS["s"]) {
+            if (MOVE_KEYS["a"] || MOVE_KEYS["d"]) {
+                this.velocity.y = -SHIP_DIAG_VEL
+            } else {
+                this.velocity.y = -SHIP_VEL;
+            }
         } 
-        else if (MOVE_KEYS["w"]!==true && MOVE_KEYS["s"]!==true) {
+        else if (!MOVE_KEYS["w"] && !MOVE_KEYS["s"]) {
             this.velocity.y = 0;
         } 
         
-        if (MOVE_KEYS["a"]===true && MOVE_KEYS["d"]!==true) {
+        /* a 'left' movement */
+        if (MOVE_KEYS["a"] && !MOVE_KEYS["d"]) {
+            if (MOVE_KEYS["w"] || MOVE_KEYS["s"]) {
+                this.velocity.x = -SHIP_DIAG_VEL;
+            } else {
             this.velocity.x = -SHIP_VEL;
-        } else  if(MOVE_KEYS["a"]!==true && MOVE_KEYS["d"]!==true) {
+            }
+        } else  if(!MOVE_KEYS["a"] && !MOVE_KEYS["d"]) {
             this.velocity.x = 0;
         }
         
-        if (MOVE_KEYS["s"]===true && MOVE_KEYS["w"]!==true) {
-            this.velocity.y = SHIP_VEL;
-        } else if (MOVE_KEYS["s"]!==true && MOVE_KEYS["w"]!== true){
+        /* s 'down' movement */
+        if (MOVE_KEYS["s"] && !MOVE_KEYS["w"]) {
+            if (MOVE_KEYS["a"] || MOVE_KEYS["d"]) {
+                this.velocity.y = SHIP_DIAG_VEL;
+            } else {
+                this.velocity.y = SHIP_VEL;
+            }
+        } else if (!MOVE_KEYS["s"] && !MOVE_KEYS["w"]){
             this.velocity.y = 0;
         } 
         
-        if (MOVE_KEYS["d"]===true && MOVE_KEYS["a"]!==true) {
-            this.velocity.x = 1;
-        } else if(MOVE_KEYS["d"]!==true && MOVE_KEYS["a"]!==true) {
+        /* d 'right' movement */
+        if (MOVE_KEYS["d"] && !MOVE_KEYS["a"]) { 
+            if (MOVE_KEYS["w"] || MOVE_KEYS["s"]) {
+                this.velocity.x = SHIP_DIAG_VEL;
+            } else {
+                this.velocity.x = SHIP_VEL;
+            }
+        } else if(!MOVE_KEYS["d"] && !MOVE_KEYS["a"]) {
             this.velocity.x = 0;
         }
     }
 
+    checkWallCollisions() {
+        if (this.position.x < 0) {
+            this.velocity.x = 0;
+            this.position.x = 0;
+        }
+
+        if (this.position.x + this.hitbox.width > canvas.width) {
+            this.velocity.x = 0;
+            this.position.x = canvas.width-this.hitbox.width;
+        }
+
+        if (this.position.y < 0) {
+            this.velocity.y = 0;
+            this.position.y = 0;
+        }
+
+        if (this.position.y + this.hitbox.height > canvas.height) {
+            this.velocity.y = 0;
+            this.position.y = canvas.height - this.hitbox.height;
+        }
+    }
+
     move() {
+        this.checkWallCollisions()
         this.position.x += this.velocity.x;
         this.position.y += this.velocity.y
     }
@@ -95,9 +159,11 @@ const animate = () => {
     player.draw()
     player.setVelocity()
     player.move();
+    bullet.draw();
 }
 
 const player = new Player();
+const bullet = new Ship_Bullet();
 
 const keyDown = (event) => {
     //console.log(event.key);
