@@ -13,7 +13,9 @@ const MOVE_KEYS = {
     d: false
 }
 
-class Ship_Bullet {
+const FIRE_KEY = " ";
+
+class Player_Bullet {
     constructor() {
         this.hitbox = {
             height: 12,
@@ -21,14 +23,19 @@ class Ship_Bullet {
         }
 
         this.position = {
-            x: canvas.width / 2,
-            y: canvas.height / 2
+            x: player.position.x + (player.hitbox.width / 2) - (this.hitbox.width/2),
+            y: player.position.y
         }
     }
 
     draw() {
         ctx.fillStyle = "yellow";
         ctx.fillRect(this.position.x, this.position.y, this.hitbox.width, this.hitbox.height);
+    }
+
+    move() {
+        this.position.y-=7;
+        //if (this.)
     }
     // CanvasRect.fillRect(x: number, y: number, w: number, h: number): void
 
@@ -154,22 +161,34 @@ class Player {
 
 const animate = () => {
     requestAnimationFrame(animate);
+    /*
+    setTimeout(() => {
+        requestAnimationFrame(animate);  
+    }, 1000 / 144)
+    */
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     player.draw()
     player.setVelocity()
     player.move();
-    bullet.draw();
+
+    bullets.forEach(bullet => bullet.draw());
+    bullets.forEach(bullet => bullet.move());
 }
 
 const player = new Player();
-const bullet = new Ship_Bullet();
+const bullets = [];
 
 const keyDown = (event) => {
     //console.log(event.key);
     if (event.key in MOVE_KEYS) {
         //console.log(true);
         velocityOnOff(event.key, true);
+    }
+    if (event.key == FIRE_KEY) {
+        console.log("hello!")
+        const bullet = new Player_Bullet();
+        bullets.push(bullet);
     }
 }
 
