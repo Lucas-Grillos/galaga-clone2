@@ -17,6 +17,8 @@ const FIRE_KEY = " ";
 
 class Player_Bullet {
     constructor() {
+
+        this.velocity=7;
         this.hitbox = {
             height: 12,
             width: 5
@@ -34,8 +36,10 @@ class Player_Bullet {
     }
 
     move() {
-        this.position.y-=7;
-        //if (this.)
+        this.position.y-=this.velocity;
+        if (this.position.y < -50) {
+            cleanBullets()
+        }
     }
     // CanvasRect.fillRect(x: number, y: number, w: number, h: number): void
 
@@ -177,7 +181,15 @@ const animate = () => {
 }
 
 const player = new Player();
-const bullets = [];
+let bullets = [];
+
+const cleanBullets = () => {
+    bullets = bullets.filter(bullet => {
+        if (bullet.position.y > 0) {
+            return bullet;
+        } 
+    })
+}
 
 const keyDown = (event) => {
     //console.log(event.key);
@@ -189,6 +201,11 @@ const keyDown = (event) => {
         console.log("hello!")
         const bullet = new Player_Bullet();
         bullets.push(bullet);
+    }
+
+    //test key
+    if (event.key=="q") {
+        console.log(bullets);
     }
 }
 
