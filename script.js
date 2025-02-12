@@ -18,21 +18,21 @@ const FIRE_KEY = " ";
 class Player_Bullet {
     constructor() {
 
-        this.velocity=7;
-        this.hitbox = {
+        this.velocity = 5;
+        this.dimensions = {
             height: 12,
             width: 5
         }
 
         this.position = {
-            x: player.position.x + (player.hitbox.width / 2) - (this.hitbox.width/2),
+            x: player.position.x + (player.dimensions.width / 2) - (this.dimensions.width/2),
             y: player.position.y
         }
     }
 
     draw() {
         ctx.fillStyle = "yellow";
-        ctx.fillRect(this.position.x, this.position.y, this.hitbox.width, this.hitbox.height);
+        ctx.fillRect(this.position.x, this.position.y, this.dimensions.width, this.dimensions.height);
     }
 
     move() {
@@ -47,9 +47,14 @@ class Player_Bullet {
 
 class Player {
     constructor() {
-        this.hitbox = {
+        this.dimensions = {
             height: 40,
             width: 30
+        }
+
+        this.hitbox = {
+            height: 30,
+            width: 20
         }
 
         this.velocity = {
@@ -58,7 +63,7 @@ class Player {
         }
 
         this.position = {
-            x: (canvas.width / 2) - (this.hitbox.width / 2),
+            x: (canvas.width / 2) - (this.dimensions.width / 2),
             y: 500
         }
 
@@ -126,9 +131,9 @@ class Player {
             this.position.x = 0;
         }
 
-        if (this.position.x + this.hitbox.width > canvas.width) {
+        if (this.position.x + this.dimensions.width > canvas.width) {
             this.velocity.x = 0;
-            this.position.x = canvas.width-this.hitbox.width;
+            this.position.x = canvas.width-this.dimensions.width;
         }
 
         if (this.position.y < 0) {
@@ -136,9 +141,9 @@ class Player {
             this.position.y = 0;
         }
 
-        if (this.position.y + this.hitbox.height > canvas.height) {
+        if (this.position.y + this.dimensions.height > canvas.height) {
             this.velocity.y = 0;
-            this.position.y = canvas.height - this.hitbox.height;
+            this.position.y = canvas.height - this.dimensions.height;
         }
     }
 
@@ -149,17 +154,22 @@ class Player {
     }
 
     draw() {
+        ctx.lineWidth = 1
         ctx.strokeStyle = "white";
-        // hitbox
-        ctx.strokeRect(this.position.x, this.position.y, this.hitbox.width, this.hitbox.height)
+        // dimensions
+        ctx.strokeRect(this.position.x, this.position.y, this.dimensions.width, this.dimensions.height)
 
         ctx.fillStyle = "red";
         // horizontal rect
-        ctx.fillRect(this.position.x, (this.position.y + this.hitbox.height - this.horizontalRect.height), 
+        ctx.fillRect(this.position.x, (this.position.y + this.dimensions.height - this.horizontalRect.height), 
             this.horizontalRect.width, this.horizontalRect.height)
         // vertical rect
-        ctx.fillRect(this.position.x + this.hitbox.width/2 - this.verticalRect.width/2, this.position.y, 
-            this.verticalRect.width, this.verticalRect.height)
+        ctx.fillRect(this.position.x + this.dimensions.width/2 - this.verticalRect.width/2, this.position.y, 
+            this.verticalRect.width, this.verticalRect.height);
+        
+        ctx.strokeStyle = "lightgreen"
+        ctx.lineWidth = 2
+        ctx.strokeRect(this.position.x + ( (this.dimensions.width - this.hitbox.width) /  2), this.position.y + (this.dimensions.height - this.hitbox.height), this.hitbox.width, this.hitbox.height);
     }
 }
 
@@ -198,7 +208,7 @@ const keyDown = (event) => {
         velocityOnOff(event.key, true);
     }
     if (event.key == FIRE_KEY) {
-        console.log("hello!")
+        //console.log("bullet fired")
         const bullet = new Player_Bullet();
         bullets.push(bullet);
     }
