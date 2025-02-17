@@ -15,6 +15,43 @@ const MOVE_KEYS = {
 
 const FIRE_KEY = " ";
 
+class Alien {
+
+    constructor() {
+        this.alien_vel = 1;
+
+        this.hitbox = 20; //for the hitbox within the diamond
+
+        // formula to figure out the side length of the diamond that the hitbox fits into at each midpoint
+        this.dimensions = (2 * this.hitbox) / Math.sqrt(2); //dimensions is for the diamond
+
+        // formula to figure out how much to add or subtract to position diamond over the hitbox
+        this.offset = Math.hypot(this.hitbox / 2);
+
+        this.position = {
+            x: 150,
+            y: 150 
+        }
+    }
+    
+    draw() {
+        ctx.save()
+        ctx.fillStyle = "lightblue";
+        ctx.translate(this.position.x + this.offset, this.position.y - this.offset);
+        ctx.rotate(Math.PI / 4);
+        ctx.fillRect(0, 0, this.dimensions, this.dimensions);
+        ctx.restore();
+
+        ctx.strokeStyle = "red";
+        ctx.strokeRect(this.position.x, this.position.y, this.hitbox, this.hitbox);
+    }
+    
+
+    move() {
+        this.position.y-=this.alien_vel;
+    }
+}
+
 class Player_Bullet {
     constructor() {
 
@@ -185,12 +222,14 @@ const animate = () => {
     player.draw()
     player.setVelocity()
     player.move();
+    first_alien.draw();
 
     bullets.forEach(bullet => bullet.draw());
     bullets.forEach(bullet => bullet.move());
 }
 
 const player = new Player();
+const first_alien = new Alien();
 let bullets = [];
 
 const cleanBullets = () => {
