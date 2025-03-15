@@ -16,24 +16,21 @@ const MOVE_KEYS = {
 const FIRE_KEY = " ";
 
 class Alien {
-
-    constructor() {
-        this.alien_vel = 1;
-
+    constructor(xPos, yPos) {
         this.hitbox = 20; //for the hitbox within the diamond
-
         // formula to figure out the side length of the diamond that the hitbox fits into at each midpoint
         this.dimensions = (2 * this.hitbox) / Math.sqrt(2); //dimensions is for the diamond
-
         // formula to figure out how much to add or subtract to position diamond over the hitbox
         this.offset = Math.hypot(this.hitbox / 2);
-
+        this.speed = {
+            x: 0,
+            y: 0
+        }
         this.position = {
-            x: 150,
-            y: 150 
+            x: xPos,
+            y: yPos 
         }
     }
-    
     draw() {
         ctx.save()
         ctx.fillStyle = "lightblue";
@@ -45,12 +42,34 @@ class Alien {
         ctx.strokeStyle = "red";
         ctx.strokeRect(this.position.x, this.position.y, this.hitbox, this.hitbox);
     }
-    
-
     move() {
-        this.position.y-=this.alien_vel;
+        this.position.x += this.speed.x
+        this.position.y += this.speed.y
     }
 }
+ 
+/*
+class Wiggle extends Alien {
+    constructor(xPos, yPos) {
+        this.hitbox = 20;
+        this.dimensions = this.dimensions = (2 * this.hitbox) / Math.sqrt(2);
+        this.offset = Math.hypot(this.hitbox / 2);
+    
+        this.speed = {
+            x: 0,
+            y: 0
+        }
+        this.position = {
+            x: xPos,
+            y: yPos 
+        }
+    }
+
+    draw() {
+        super.draw()
+    }
+}
+*/
 
 class Player_Bullet {
     constructor() {
@@ -223,13 +242,16 @@ const animate = () => {
     player.setVelocity()
     player.move();
     first_alien.draw();
+    first_alien.move();
+    //wiggle_alien.draw();
 
     bullets.forEach(bullet => bullet.draw());
     bullets.forEach(bullet => bullet.move());
 }
 
 const player = new Player();
-const first_alien = new Alien();
+const first_alien = new Alien(250, 150);
+const wiggle_alien = new Wiggle(500, 250);
 let bullets = [];
 
 const cleanBullets = () => {
