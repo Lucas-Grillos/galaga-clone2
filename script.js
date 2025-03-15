@@ -43,11 +43,30 @@ class Alien {
         ctx.strokeRect(this.position.x, this.position.y, this.hitbox, this.hitbox);
     }
     move() {
-        this.position.x += this.speed.x
         this.position.y += this.speed.y
     }
 }
- 
+
+class WiggleAlien extends Alien {
+    constructor(xPos, yPos) {
+        super(xPos, yPos)
+        this.init_x = xPos;
+
+        this.speed = {
+            x: 0.75,
+            y: 1
+        }
+    }
+
+
+    move() {
+        super.move()
+        if (this.position.x < this.init_x - 40 || this.position.x > this.init_x + 40) {
+            this.speed.x*=-1
+        }
+        this.position.x += this.speed.x;
+    }
+}
 /*
 class Wiggle extends Alien {
     constructor(xPos, yPos) {
@@ -243,7 +262,8 @@ const animate = () => {
     player.move();
     first_alien.draw();
     first_alien.move();
-    //wiggle_alien.draw();
+    wiggle_alien.draw();
+    wiggle_alien.move();
 
     bullets.forEach(bullet => bullet.draw());
     bullets.forEach(bullet => bullet.move());
@@ -251,7 +271,7 @@ const animate = () => {
 
 const player = new Player();
 const first_alien = new Alien(250, 150);
-const wiggle_alien = new Wiggle(500, 250);
+const wiggle_alien = new WiggleAlien(500, 250);
 let bullets = [];
 
 const cleanBullets = () => {
